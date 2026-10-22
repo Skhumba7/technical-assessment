@@ -1,0 +1,31 @@
+## .NET / Visual Studio
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.ide
+.vs/
+.vscode/
+.idea/
+
+## Build / Artifacts
+publish/
+[Aa]rtifacts/
+TestResults/
+*.trx
+*.coverage
+
+## Databases / Local files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+## OS / Temp
+.DS_Store
+Thumbs.db
+*.log
+scratch/

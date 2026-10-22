@@ -1,0 +1,6 @@
+@Zapper.AcmeStub_HostAddress = http://localhost:5240
+
+GET {{Zapper.AcmeStub_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

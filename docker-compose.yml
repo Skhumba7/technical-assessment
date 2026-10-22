@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: zapper-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zapper_payments
+      POSTGRES_USER: zapper
+      POSTGRES_PASSWORD: zapper_password_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zapper -d zapper_payments"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  acme-stub:
+    build:
+      context: .
+      dockerfile: src/Zapper.AcmeStub/Dockerfile
+    container_name: acme-pay-stub
+    restart: unless-stopped
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Zapper__AdviceUrl: http://zapper-payments-api:8080/api/v1/notifications/payment-advice
+      Zapper__SwitchWebhookUrl: http://zapper-payments-api:8080/api/v1/notifications/transaction-status
+      Acme__ApiKey: sk_test_demo_key_987654321
+      Acme__MerchantId: 8B67BF88-BB8D-4EB5-ADFC-0F5C97C7ED67
+      Acme__AdviceUsername: acme_advice_user
+      Acme__AdvicePassword: acme_advice_password_123
+      Acme__WebhookSecret: k7Qf2mZr9XpL4vNcA8sTgH3wYbE6dJ5u
+
+  zapper-payments-api:
+    build:
+      context: .
+      dockerfile: src/Zapper.Payments.Api/Dockerfile
+    container_name: zapper-payments-api
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=zapper_payments;Username=zapper;Password=zapper_password_123"
+      Acme__BaseUrl: http://acme-stub:8080
+      Acme__ApiKey: sk_test_demo_key_987654321
+      Acme__MerchantId: 8B67BF88-BB8D-4EB5-ADFC-0F5C97C7ED67
+      Acme__TimeoutSeconds: 30
+      Acme__AdviceUsername: acme_advice_user
+      Acme__AdvicePassword: acme_advice_password_123
+      Acme__WebhookSecret: k7Qf2mZr9XpL4vNcA8sTgH3wYbE6dJ5u
+    depends_on:
+      postgres:
+        condition: service_healthy
+      acme-stub:
+        condition: service_started
+
+volumes:
+  postgres_data:
