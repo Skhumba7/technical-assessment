@@ -22,7 +22,9 @@ This document fulfills the requirements of **Task 4: AI Collaboration Artifacts 
 | **10** | 2026-10-22 20:04:43 | Run application locally and execute smoke tests | Systems / Test Engineer | Live local run of Api & AcmeStub, 6 smoke test scenarios verified |
 | **11** | 2026-10-22 20:11:09 | Document smoke test results | QA Engineer | `ai/smoke-test-results.md` with raw HTTP request/response traces |
 | **12** | 2026-10-22 20:14:04 | Invoke Security Analyst and Performance Tester skills | `security-engineering`, `performance-testing` | `ai/security-and-performance-audit.md`, timing attack & DoS fixes |
-| **13** | 2026-10-22 20:19:42 | Document all prompts into an md file | Documentation Specialist | `ai/prompts-history.md` (this file) |
+| **13** | 2026-10-22 20:19:42 | Document all prompts into an md file | Documentation Specialist | `ai/prompts-history.md` |
+| **14** | 2026-10-22 20:24:46 | Push the code to remote | DevOps / Git Engineer | Committed 79 files (`ae1021b`) and pushed to `origin/main` |
+| **15** | 2026-10-22 20:27:31 | Create appsettings files for test and prod environments | Configuration / DevOps Engineer | Created `appsettings.Test.json` & `appsettings.Production.json` for Api & AcmeStub |
 
 ---
 
@@ -308,7 +310,7 @@ This document fulfills the requirements of **Task 4: AI Collaboration Artifacts 
 
 ---
 
-### Prompt 13: Prompt History Documentation (Current)
+### Prompt 13: Prompt History Documentation
 - **Timestamp:** `2026-10-22T20:19:42Z`
 - **User Request:**
   ```
@@ -322,6 +324,46 @@ This document fulfills the requirements of **Task 4: AI Collaboration Artifacts 
   - Updated [README.md](file:///D:/source/projects/technical-assessment/README.md) and [SOLUTION.md](file:///D:/source/projects/technical-assessment/SOLUTION.md) to cross-reference this document.
 - **Key Artifacts Created:**
   - `ai/prompts-history.md`
+
+---
+
+### Prompt 14: Push Code to Remote Repository
+- **Timestamp:** `2026-10-22T20:24:46Z`
+- **User Request:**
+  ```
+  now push the code to remote
+  ```
+- **Context & Intent:**
+  Stage all project files, verify `.gitignore` integrity, author an informative root commit message, and push the branch to GitHub `origin/main`.
+- **Personas / Skills Invoked:**
+  - DevOps / Git Engineering
+- **AI Agent Actions:**
+  - Staged all 79 project files, tests, docker configurations, and documentation artifacts.
+  - Created root commit `ae1021b` (`feat: complete Zapper Payments Integration Service assessment`).
+  - Executed `git push -u origin main` to `https://github.com/Skhumba7/technical-assessment.git`.
+
+---
+
+### Prompt 15: Create AppSettings for Test and Production Environments
+- **Timestamp:** `2026-10-22T20:27:31Z`
+- **User Request:**
+  ```
+  I noticed that you didn't create a appsettings file for test and prod environments (Please create them)
+  ```
+- **Context & Intent:**
+  Ensure enterprise configuration segregation by provisioning environment-specific `appsettings.Test.json` and `appsettings.Production.json` configuration files for both the API service and the Acme mock stub.
+- **Personas / Skills Invoked:**
+  - Configuration & DevOps Engineering
+- **AI Agent Actions:**
+  - Created `src/Zapper.Payments.Api/appsettings.Test.json` configured for local/CI automated testing with SQLite test databases and detailed EF Core log levels.
+  - Created `src/Zapper.Payments.Api/appsettings.Production.json` configured for AWS Aurora PostgreSQL cluster connection strings with SSL, tightened warning-level logging, and environment variable replacement tokens for API secrets.
+  - Created `src/Zapper.AcmeStub/appsettings.Test.json` and `src/Zapper.AcmeStub/appsettings.Production.json` matching production callback routing.
+  - Verified compilation and confirmed all 24 unit and integration tests continue to pass.
+- **Key Artifacts Created:**
+  - `src/Zapper.Payments.Api/appsettings.Test.json`
+  - `src/Zapper.Payments.Api/appsettings.Production.json`
+  - `src/Zapper.AcmeStub/appsettings.Test.json`
+  - `src/Zapper.AcmeStub/appsettings.Production.json`
 
 ---
 
