@@ -25,6 +25,7 @@ This document fulfills the requirements of **Task 4: AI Collaboration Artifacts 
 | **13** | 2026-10-22 20:19:42 | Document all prompts into an md file | Documentation Specialist | `ai/prompts-history.md` |
 | **14** | 2026-10-22 20:24:46 | Push the code to remote | DevOps / Git Engineer | Committed 79 files (`ae1021b`) and pushed to `origin/main` |
 | **15** | 2026-10-22 20:27:31 | Create appsettings files for test and prod environments | Configuration / DevOps Engineer | Created `appsettings.Test.json` & `appsettings.Production.json` for Api & AcmeStub |
+| **16** | 2026-10-22 20:29:46 | Create Docker Compose file for production deployment | DevOps / Cloud Engineer | Created `docker-compose.prod.yml` and `.env.production.example` |
 
 ---
 
@@ -364,6 +365,33 @@ This document fulfills the requirements of **Task 4: AI Collaboration Artifacts 
   - `src/Zapper.Payments.Api/appsettings.Production.json`
   - `src/Zapper.AcmeStub/appsettings.Test.json`
   - `src/Zapper.AcmeStub/appsettings.Production.json`
+
+---
+
+### Prompt 16: Production Docker Compose Specification
+- **Timestamp:** `2026-10-22T20:29:46Z`
+- **User Request:**
+  ```
+  now also create a docker compose file that will be executed when deploying to production
+  ```
+- **Context & Intent:**
+  Author a production-grade Docker Compose specification (`docker-compose.prod.yml`) incorporating container hardening, resource constraints, health probes, log rotation, network segregation, and environment variable secret injection.
+- **Personas / Skills Invoked:**
+  - DevOps & Cloud Infrastructure Engineering
+- **AI Agent Actions:**
+  - Authored `docker-compose.prod.yml`:
+    - `ASPNETCORE_ENVIRONMENT: Production`
+    - Security options: `no-new-privileges:true` and non-root execution
+    - Resource quotas: CPU limits (2.0) and memory limits (1024MB API / 2048MB PostgreSQL)
+    - Production log rotation (`json-file` driver with `max-size: 20m` and `max-file: 5`)
+    - Container healthchecks verifying `/health/live` via `wget`
+    - Network isolation on `backend-net`
+  - Created `.env.production.example` template covering all required production environment variables.
+  - Validated compose syntax with `docker compose -f docker-compose.prod.yml config`.
+  - Updated [README.md](file:///D:/source/projects/technical-assessment/README.md) with production launch commands.
+- **Key Artifacts Created:**
+  - `docker-compose.prod.yml`
+  - `.env.production.example`
 
 ---
 

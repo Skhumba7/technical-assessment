@@ -60,6 +60,22 @@ If you don't have Docker running, you can run both services natively. The API au
 
 ---
 
+### Option C: Production Deployment via Docker Compose
+
+For production environments (with resource limits, log rotation, security hardening, and real Acme Pay gateway integration):
+
+1. Copy the production environment template and configure secrets:
+   ```bash
+   cp .env.production.example .env.production
+   ```
+
+2. Launch using the production compose specification:
+   ```bash
+   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+   ```
+
+---
+
 ## Seed Data for Testing
 
 On startup, the system automatically seeds:

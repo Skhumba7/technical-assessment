@@ -1,0 +1,89 @@
+services:
+  zapper-payments-api:
+    build:
+      context: .
+      dockerfile: src/Zapper.Payments.Api/Dockerfile
+    image: zapper/payments-api:latest
+    container_name: zapper-payments-api-prod
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "${HOST_HTTP_PORT:-5000}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__DefaultConnection: "Host=${DB_HOST:-postgres};Port=${DB_PORT:-5432};Database=${DB_NAME:-zapper_payments};Username=${DB_USER:-zapper};Password=${DB_PASSWORD};SslMode=${DB_SSL_MODE:-Prefer};"
+      Acme__BaseUrl: "${ACME_BASE_URL:-https://api.acmepay.com}"
+      Acme__ApiKey: "${ACME_API_KEY}"
+      Acme__MerchantId: "${ACME_MERCHANT_ID}"
+      Acme__TimeoutSeconds: "${ACME_TIMEOUT_SECONDS:-15}"
+      Acme__AdviceUsername: "${ACME_ADVICE_USERNAME}"
+      Acme__AdvicePassword: "${ACME_ADVICE_PASSWORD}"
+      Acme__WebhookSecret: "${ACME_WEBHOOK_SECRET}"
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - backend-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: zapper-postgres-prod
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_DB: "${DB_NAME:-zapper_payments}"
+      POSTGRES_USER: "${DB_USER:-zapper}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-zapper} -d ${DB_NAME:-zapper_payments}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - backend-net
+
+networks:
+  backend-net:
+    driver: bridge
+
+volumes:
+  postgres_prod_data:
+    driver: local
